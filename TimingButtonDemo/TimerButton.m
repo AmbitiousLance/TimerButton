@@ -10,21 +10,24 @@
 
 @interface TimerButton ()
 @property (nonatomic, assign) NSInteger seconds;
+@property (nonatomic, strong) NSString *durationTitle;
 @end
 
 @implementation TimerButton
 
 #pragma mark - init
-- (instancetype)initWithFrame:(CGRect)frame title:(NSString *)title seconds:(NSInteger)seconds progressBlock:(progressBlock)progressBlock{
+- (instancetype)initWithFrame:(CGRect)frame title:(NSString *)title durationTitle:(NSString *)durationTitle seconds:(NSInteger)seconds progressBlock:(progressBlock)progressBlock{
     if (self = [super initWithFrame:frame]) {
+        _durationTitle = durationTitle;
         [self setTitle:title forState:UIControlStateNormal];
         [self addTargetActionWithSeconds:seconds delegate:nil progressBlock:progressBlock];
     }
     return self;
 }
 
-- (instancetype)initWithFrame:(CGRect)frame title:(NSString *)title seconds:(NSInteger)seconds delegate:(id<TimingDelegate>)delegate{
+- (instancetype)initWithFrame:(CGRect)frame title:(NSString *)title durationTitle:(NSString *)durationTitle seconds:(NSInteger)seconds delegate:(id<TimingDelegate>)delegate{
     if (self = [super initWithFrame:frame]) {
+        _durationTitle = durationTitle;
         [self setTitle:title forState:UIControlStateNormal];
         [self addTargetActionWithSeconds:seconds delegate:delegate progressBlock:nil];
    }
@@ -46,11 +49,11 @@
     [self addTarget:self action:@selector(startCountDown) forControlEvents:UIControlEventTouchUpInside];
 }
 
-#pragma mark - StartTiming
+#pragma mark - CountDown
 - (void)startCountDown{
     //timeStart
-    if (_delegate && [_delegate respondsToSelector:@selector(startRunning:state:restTime:)]) {
-        [_delegate startRunning:self state:TimeStart restTime:nil];
+    if (_delegate && [_delegate respondsToSelector:@selector(startRunningByButton:state:restTime:)]) {
+        [_delegate startRunningByButton:self state:TimeStart restTime:nil];
     }
     if (_progressBlock) {
         _progressBlock(self,TimeStart,nil);
@@ -65,10 +68,12 @@
             dispatch_source_cancel(_timer);
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.enabled = YES;
-                
+                if (_durationTitle) {
+                    [self setTitle:_durationTitle forState:UIControlStateNormal];
+                }
                 //timeFinish
-                if (_delegate && [_delegate respondsToSelector:@selector(startRunning:state:restTime:)]) {
-                    [_delegate startRunning:self state:TimeFinish restTime:nil];
+                if (_delegate && [_delegate respondsToSelector:@selector(startRunningByButton:state:restTime:)]) {
+                    [_delegate startRunningByButton:self state:TimeFinish restTime:nil];
                 }
                 if (_progressBlock) {
                     _progressBlock(self,TimeFinish,nil);
@@ -80,10 +85,12 @@
             NSString *restTime = [NSString stringWithFormat:@"%.2ld", (long)seconds];
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.enabled = NO;
-                
+                if (_durationTitle) {
+                    [self setTitle:[NSString stringWithFormat:@"%@(%@s)",_durationTitle,restTime] forState:UIControlStateNormal];
+                }
                 //timeDuration
-                if (_delegate && [_delegate respondsToSelector:@selector(startRunning:state:restTime:)]) {
-                    [_delegate startRunning:self state:TimeDuration restTime:restTime];
+                if (_delegate && [_delegate respondsToSelector:@selector(startRunningByButton:state:restTime:)]) {
+                    [_delegate startRunningByButton:self state:TimeDuration restTime:restTime];
                 }
                 if (_progressBlock) {
                     _progressBlock(self,TimeDuration,restTime);

@@ -10,7 +10,9 @@
 #import "TimerButton.h"
 
 @interface ViewController ()<TimingDelegate>
-
+{
+    __weak IBOutlet TimerButton *_storyboardBtn;
+}
 @end
 
 @implementation ViewController
@@ -20,22 +22,14 @@
     // Do any additional setup after loading the view, typically from a nib.
     self.view.backgroundColor = [UIColor whiteColor];
     
-    TimerButton *blockBtn = [[TimerButton alloc] initWithFrame:CGRectMake(100, 100, 150, 30) title:@"获取验证码" seconds:60 progressBlock:^(TimerButton *button, TimeState state, NSString *restTime) {
-        switch (state) {
-            case TimeDuration:{
-                //进行中
-                [button setTitle:[NSString stringWithFormat:@"重新获取(%@s)",restTime] forState:UIControlStateNormal];
-            }
-                break;
-            case TimeFinish:{
-                //结束
-                [button setTitle:@"重新获取" forState:UIControlStateNormal];
-            }
-            default:{
-                //开始
-                NSLog(@"计时开始");
-            }
-                break;
+    [_storyboardBtn setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
+    _storyboardBtn.tag = 100;
+    [_storyboardBtn startWithSeconds:60 delegate:self];
+    
+    
+    TimerButton *blockBtn = [[TimerButton alloc] initWithFrame:CGRectMake(100, 100, 150, 30) title:@"获取验证码" durationTitle:@"重新获取" seconds:60 progressBlock:^(TimerButton *button, TimeState state, NSString *restTime) {
+        if (state == TimeStart) {
+            NSLog(@"计时开始");
         }
     }];
     [blockBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
@@ -43,29 +37,24 @@
     [self.view addSubview:blockBtn];
     
     
-    TimerButton *delegateBtn = [[TimerButton alloc] initWithFrame:CGRectMake(100, 200, 150, 30) title:@"获取验证码" seconds:60 delegate:self];
+    TimerButton *delegateBtn = [[TimerButton alloc] initWithFrame:CGRectMake(100, 200, 150, 30) title:@"获取验证码" durationTitle:@"重新获取" seconds:60 delegate:self];
     [delegateBtn setTitleColor:[UIColor greenColor] forState:UIControlStateNormal];
     [delegateBtn setTitleColor:[UIColor grayColor] forState:UIControlStateDisabled];
     [self.view addSubview:delegateBtn];
 }
 
 #pragma mark - TimingDelegate
-- (void)startRunning:(TimerButton *)button state:(TimeState)state restTime:(NSString *)restTime{
-    switch (state) {
-        case TimeDuration:{
-            //进行中
-            [button setTitle:[NSString stringWithFormat:@"重新获取(%@s)",restTime] forState:UIControlStateNormal];
+- (void)startRunningByButton:(TimerButton *)button state:(TimeState)state restTime:(NSString *)restTime{
+    if (state == TimeStart) {
+        NSLog(@"计时开始");
+    }else{
+        if (button.tag == 100) {
+            if (state == TimeDuration) {
+                [button setTitle:[NSString stringWithFormat:@"重新发送(%@s)",restTime] forState:UIControlStateNormal];
+            }else{
+                [button setTitle:@"重新发送" forState:UIControlStateNormal];
+            }
         }
-            break;
-        case TimeFinish:{
-            //结束
-            [button setTitle:@"重新获取" forState:UIControlStateNormal];
-        }
-        default:{
-            //开始
-            NSLog(@"计时开始");
-        }
-            break;
     }
 }
 

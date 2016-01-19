@@ -25,7 +25,7 @@ typedef void (^progressBlock)(TimerButton *button, TimeState state, NSString *re
  * @param button      present button
  * @param state         present state
  */
-- (void)startRunning:(TimerButton *)button state:(TimeState)state restTime:(NSString *)restTime;
+- (void)startRunningByButton:(TimerButton *)button state:(TimeState)state restTime:(NSString *)restTime;
 
 @end
 
@@ -34,10 +34,12 @@ typedef void (^progressBlock)(TimerButton *button, TimeState state, NSString *re
 @property (nonatomic, strong) progressBlock progressBlock;
 @property (nonatomic, strong) id<TimingDelegate>delegate;
 
-- (instancetype)initWithFrame:(CGRect)frame title:(NSString *)title seconds:(NSInteger)seconds progressBlock:(progressBlock)progressBlock;
-- (instancetype)initWithFrame:(CGRect)frame title:(NSString *)title seconds:(NSInteger)seconds delegate:(id<TimingDelegate>)delegate;
+- (instancetype)initWithFrame:(CGRect)frame title:(NSString *)title durationTitle:(NSString *)durationTitle seconds:(NSInteger)seconds progressBlock:(progressBlock)progressBlock;
+- (instancetype)initWithFrame:(CGRect)frame title:(NSString *)title durationTitle:(NSString *)durationTitle seconds:(NSInteger)seconds delegate:(id<TimingDelegate>)delegate;
 
 // When you use storyboard or xib, you have to use these methods to realize the function.
+// Warning: You have to select the custom type of the button if the button is in the storyboard or xib, or the title will shine every second.
+
 - (void)startWithSeconds:(NSInteger)seconds delegate:(id<TimingDelegate>)delegate;
 - (void)startWithSeconds:(NSInteger)seconds progressBlock:(progressBlock)progressBlock;
 
