@@ -72,7 +72,6 @@
                 }
                 if (_progressBlock) {
                     _progressBlock(self,TimeFinish,nil);
-                    _progressBlock = nil;
                 }
 
             });
