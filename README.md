@@ -1,5 +1,3 @@
 #TimerButton
-#Custom button which can be used to count down.
 
-自定义倒计时按钮，支持storyboard，xib，纯代码，支持block回调使用以及delegate委托使用！欢迎各位小友下载使用，也可以提出你的意见，^_^
-                                                                                                                                                            Lance wu
+自定义倒计时按钮，支持storyboard，xib，纯代码，支持block回调使用以及delegate委托使用。按钮颜色，背景图，背景色，自己根据项目色调自己赋值，代码创建的时候，其余属性均在初始化方法中对应赋值即可，storyboard或者xib创建依旧需要自己对应相应的按钮显示title。使用中如果发现有不够好的地方，欢迎反馈，邮箱744542786@qq.com ^_^
